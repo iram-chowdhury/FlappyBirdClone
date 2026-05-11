@@ -43,6 +43,14 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                 gRunning = false;
                 PostQuitMessage(0);
             }
+            else if (wParam == 'B') {
+                if (gGame.background == BackgroundColor::Blue) {
+                    gGame.background = BackgroundColor::Red;
+                }
+                else {
+                    gGame.background = BackgroundColor::Blue;
+                }
+            }
             break;
         case WM_LBUTTONDOWN:
             gGame.Flap();

@@ -21,7 +21,13 @@ static void DrawTextLine(BackBuffer& backBuffer, HDC dc, const wchar_t* text, in
 
 void RenderGame(HDC windowDC, BackBuffer& backBuffer, const Game& game, const PlayerProfile& profile) {
     Renderer renderer{&backBuffer};
-    renderer.Clear(RGB32(117, 203, 231));
+    uint32_t backgroundColor = RGB32(117, 203, 231);
+
+    if (game.background == BackgroundColor::Red) {
+        backgroundColor = RGB32(220, 80, 80);
+    }
+
+    renderer.Clear(backgroundColor);
 
     int w = backBuffer.width;
     int h = backBuffer.height;

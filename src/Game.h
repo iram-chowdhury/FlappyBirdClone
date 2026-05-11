@@ -4,6 +4,11 @@
 
 #include <cstdint>
 
+enum class BackgroundColor {
+    Blue,
+    Red
+};
+
 struct Pipe {
     float x = 0.0f;
     float gapY = 0.0f;
@@ -19,6 +24,7 @@ struct Game {
     bool started = false;
     bool gameOver = false;
     uint32_t rng = 0xC0FFEEu;
+    BackgroundColor background = BackgroundColor::Blue;
 
     float groundY = 560.0f;
     float scroll = 0.0f;
@@ -32,3 +38,5 @@ private:
     uint32_t RandomU32();
     float RandomRange(float minValue, float maxValue);
 };
+
+

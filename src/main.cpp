@@ -26,44 +26,133 @@ static void SaveHighScoreIfNeeded() {
 
 static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
-        case WM_SIZE: {
-            RECT rect;
-            GetClientRect(window, &rect);
-            gBackBuffer.Resize(rect.right - rect.left, rect.bottom - rect.top);
-            if (!gInitialized) {
-                gGame.SetBestScore(gProfile.bestScore);
-                gGame.Reset(gBackBuffer.width, gBackBuffer.height);
-                gInitialized = true;
-            }
-        } break;
-        case WM_KEYDOWN:
-            if (wParam == VK_SPACE || wParam == VK_UP) {
-                gGame.Flap();
-            } else if (wParam == VK_ESCAPE) {
-                gRunning = false;
-                PostQuitMessage(0);
-            }
-            else if (wParam == 'B') {
-                if (gGame.background == BackgroundColor::Blue) {
-                    gGame.background = BackgroundColor::Red;
+    case WM_SIZE: {
+        RECT rect;
+        GetClientRect(window, &rect);
+        gBackBuffer.Resize(rect.right - rect.left, rect.bottom - rect.top);
+        if (!gInitialized) {
+            gGame.SetBestScore(gProfile.bestScore);
+            gGame.Reset(gBackBuffer.width, gBackBuffer.height);
+            gInitialized = true;
+        }
+    } break;
+
+    case WM_KEYDOWN: {
+        if (gGame.screen == AppScreen::MainMenu) {
+            if (wParam == VK_UP) {
+                --gGame.selectedMenuItem;
+                if (gGame.selectedMenuItem < 0) {
+                    gGame.selectedMenuItem = 2;
                 }
-                else {
-                    gGame.background = BackgroundColor::Blue;
+            }
+            else if (wParam == VK_DOWN) {
+                ++gGame.selectedMenuItem;
+                if (gGame.selectedMenuItem > 2) {
+                    gGame.selectedMenuItem = 0;
+                }
+            }
+            else if (wParam == VK_RETURN) {
+                if (gGame.selectedMenuItem == 0) {
+                    gGame.screen = AppScreen::Playing;
+                }
+                else if (gGame.selectedMenuItem == 1) {
+                    gGame.screen = AppScreen::UserSelect;
+                }
+                else if (gGame.selectedMenuItem == 2) {
+                    gGame.screen = AppScreen::Settings;
                 }
             }
             break;
-        case WM_LBUTTONDOWN:
+        }
+
+        if (gGame.screen == AppScreen::Paused) {
+
+            if (wParam == VK_UP) {
+                --gGame.selectedMenuItem;
+
+                if (gGame.selectedMenuItem < 0) {
+                    gGame.selectedMenuItem = 2;
+                }
+            }
+
+            else if (wParam == VK_DOWN) {
+                ++gGame.selectedMenuItem;
+
+                if (gGame.selectedMenuItem > 2) {
+                    gGame.selectedMenuItem = 0;
+                }
+            }
+
+            else if (wParam == VK_RETURN) {
+
+                if (gGame.selectedMenuItem == 0) {
+                    gGame.screen = AppScreen::Playing;
+                }
+
+                else if (gGame.selectedMenuItem == 1) {
+                    gGame.screen = AppScreen::Settings;
+                }
+
+                else if (gGame.selectedMenuItem == 2) {
+                    gGame.screen = AppScreen::MainMenu;
+
+                    gGame.Reset(gBackBuffer.width, gBackBuffer.height);
+                    gGame.selectedMenuItem = 0;
+                }
+            }
+
+            break;
+        }
+
+        if (gGame.screen == AppScreen::Settings) {
+
+            if (wParam == VK_LEFT) {
+                gGame.PreviousBackground();
+            }
+
+            else if (wParam == VK_RIGHT) {
+                gGame.NextBackground();
+            }
+
+            else if (wParam == VK_ESCAPE) {
+                gGame.screen = AppScreen::MainMenu;
+            }
+
+            break;
+        }
+
+        if (gGame.screen == AppScreen::Playing &&
+            (wParam == VK_SPACE || wParam == VK_UP)) {
             gGame.Flap();
-            break;
-        case WM_CLOSE:
-        case WM_DESTROY:
-            SaveHighScoreIfNeeded();
-            gRunning = false;
-            PostQuitMessage(0);
-            break;
-        default:
-            return DefWindowProcW(window, message, wParam, lParam);
+        }
+        else if (wParam == VK_ESCAPE) {
+            if (gGame.screen == AppScreen::Playing) {
+                gGame.screen = AppScreen::Paused;
+                gGame.selectedMenuItem = 0;
+            }
+            else if (gGame.screen == AppScreen::Paused) {
+                gGame.screen = AppScreen::Playing;
+            }
+        }
+    } break;
+
+    case WM_LBUTTONDOWN:
+        if (gGame.screen == AppScreen::Playing) {
+            gGame.Flap();
+        }
+        break;
+
+    case WM_CLOSE:
+    case WM_DESTROY:
+        SaveHighScoreIfNeeded();
+        gRunning = false;
+        PostQuitMessage(0);
+        break;
+
+    default:
+        return DefWindowProcW(window, message, wParam, lParam);
     }
+
     return 0;
 }
 

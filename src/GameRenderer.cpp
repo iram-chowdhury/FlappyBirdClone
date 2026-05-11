@@ -26,6 +26,21 @@ void RenderGame(HDC windowDC, BackBuffer& backBuffer, const Game& game, const Pl
     if (game.background == BackgroundColor::Red) {
         backgroundColor = RGB32(220, 80, 80);
     }
+    else if (game.background == BackgroundColor::Pink) {
+        backgroundColor = RGB32(255, 182, 193);
+    }
+    else if (game.background == BackgroundColor::Purple) {
+        backgroundColor = RGB32(160, 120, 255);
+    }
+    else if (game.background == BackgroundColor::Black) {
+        backgroundColor = RGB32(20, 20, 20);
+    }
+    else if (game.background == BackgroundColor::Green) {
+        backgroundColor = RGB32(90, 200, 120);
+    }
+    else if (game.background == BackgroundColor::Yellow) {
+        backgroundColor = RGB32(255, 225, 90);
+    }
 
     renderer.Clear(backgroundColor);
 
@@ -61,6 +76,98 @@ void RenderGame(HDC windowDC, BackBuffer& backBuffer, const Game& game, const Pl
     renderer.RectFill({game.bird.x - 19.0f, game.bird.y + 1.0f, 13.0f, 8.0f}, RGB32(241, 177, 42));
 
     backBuffer.Present(windowDC);
+    if (game.screen == AppScreen::MainMenu) {
+        DrawTextLine(backBuffer, windowDC, L"Flappy Bird Clone", 0, h / 2 - 120, 40, RGB(255, 255, 255), DT_CENTER);
+
+        DrawTextLine(backBuffer, windowDC,
+            game.selectedMenuItem == 0 ? L"> Start Game" : L"  Start Game",
+            0, h / 2 - 40, 28, RGB(255, 255, 255), DT_CENTER);
+
+        DrawTextLine(backBuffer, windowDC,
+            game.selectedMenuItem == 1 ? L"> User" : L"  User",
+            0, h / 2, 28, RGB(255, 255, 255), DT_CENTER);
+
+        DrawTextLine(backBuffer, windowDC,
+            game.selectedMenuItem == 2 ? L"> Settings" : L"  Settings",
+            0, h / 2 + 40, 28, RGB(255, 255, 255), DT_CENTER);
+
+        DrawTextLine(backBuffer, windowDC, L"Use UP/DOWN and ENTER", 0, h / 2 + 110, 20, RGB(255, 255, 255), DT_CENTER);
+
+        return;
+    }
+
+    if (game.screen == AppScreen::Paused) {
+        DrawTextLine(backBuffer, windowDC, L"Paused", 0, h / 2 - 120, 42, RGB(255, 255, 255), DT_CENTER);
+
+        DrawTextLine(backBuffer, windowDC,
+            game.selectedMenuItem == 0 ? L"> Continue" : L"  Continue",
+            0, h / 2 - 40, 28, RGB(255, 255, 255), DT_CENTER);
+
+        DrawTextLine(backBuffer, windowDC,
+            game.selectedMenuItem == 1 ? L"> Settings" : L"  Settings",
+            0, h / 2, 28, RGB(255, 255, 255), DT_CENTER);
+
+        DrawTextLine(backBuffer, windowDC,
+            game.selectedMenuItem == 2 ? L"> End" : L"  End",
+            0, h / 2 + 40, 28, RGB(255, 255, 255), DT_CENTER);
+
+        DrawTextLine(backBuffer, windowDC, L"Use UP/DOWN and ENTER", 0, h / 2 + 110, 20, RGB(255, 255, 255), DT_CENTER);
+
+        return;
+    }
+
+    if (game.screen == AppScreen::Settings) {
+
+        DrawTextLine(backBuffer, windowDC,
+            L"Settings",
+            0, h / 2 - 120, 42,
+            RGB(255, 255, 255),
+            DT_CENTER);
+
+        const wchar_t* backgroundText = L"Blue";
+
+        if (game.background == BackgroundColor::Red) {
+            backgroundText = L"Red";
+        }
+        else if (game.background == BackgroundColor::Pink) {
+            backgroundText = L"Pink";
+        }
+        else if (game.background == BackgroundColor::Purple) {
+            backgroundText = L"Purple";
+        }
+        else if (game.background == BackgroundColor::Black) {
+            backgroundText = L"Black";
+        }
+        else if (game.background == BackgroundColor::Green) {
+            backgroundText = L"Green";
+        }
+        else if (game.background == BackgroundColor::Yellow) {
+            backgroundText = L"Yellow";
+        }
+
+        std::wstring settingLine =
+            L"Background Color: " + std::wstring(backgroundText);
+
+        DrawTextLine(backBuffer, windowDC,
+            settingLine.c_str(),
+            0, h / 2 - 20, 28,
+            RGB(255, 255, 255),
+            DT_CENTER);
+
+        DrawTextLine(backBuffer, windowDC,
+            L"LEFT / RIGHT to change",
+            0, h / 2 + 30, 22,
+            RGB(255, 255, 255),
+            DT_CENTER);
+
+        DrawTextLine(backBuffer, windowDC,
+            L"ESC to go back",
+            0, h / 2 + 70, 22,
+            RGB(255, 255, 255),
+            DT_CENTER);
+
+        return;
+    }
 
     wchar_t scoreText[64];
     std::swprintf(scoreText, 64, L"%d", game.score);

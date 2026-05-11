@@ -6,7 +6,21 @@
 
 enum class BackgroundColor {
     Blue,
-    Red
+    Red,
+    Pink,
+    Purple,
+    Black,
+    Green,
+    Yellow
+};
+
+enum class AppScreen {
+    MainMenu,
+    UserSelect,
+    Settings,
+    Playing,
+    Paused,
+    GameOver
 };
 
 struct Pipe {
@@ -25,6 +39,8 @@ struct Game {
     bool gameOver = false;
     uint32_t rng = 0xC0FFEEu;
     BackgroundColor background = BackgroundColor::Blue;
+    AppScreen screen = AppScreen::MainMenu;
+    int selectedMenuItem = 0;
 
     float groundY = 560.0f;
     float scroll = 0.0f;
@@ -33,6 +49,8 @@ struct Game {
     void Reset(int width, int height);
     void Flap();
     bool Update(float dt, int width, int height);
+    void NextBackground();
+    void PreviousBackground();
 
 private:
     uint32_t RandomU32();

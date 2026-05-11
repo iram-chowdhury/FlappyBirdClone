@@ -104,3 +104,53 @@ bool Game::Update(float dt, int, int height) {
 
     return highScoreChanged;
 }
+
+void Game::NextBackground() {
+
+    if (background == BackgroundColor::Blue) {
+        background = BackgroundColor::Red;
+    }
+    else if (background == BackgroundColor::Red) {
+        background = BackgroundColor::Pink;
+    }
+    else if (background == BackgroundColor::Pink) {
+        background = BackgroundColor::Purple;
+    }
+    else if (background == BackgroundColor::Purple) {
+        background = BackgroundColor::Black;
+    }
+    else if (background == BackgroundColor::Black) {
+        background = BackgroundColor::Green;
+    }
+    else if (background == BackgroundColor::Green) {
+        background = BackgroundColor::Yellow;
+    }
+    else {
+        background = BackgroundColor::Blue;
+    }
+}
+
+void Game::PreviousBackground() {
+
+    if (background == BackgroundColor::Blue) {
+        background = BackgroundColor::Yellow;
+    }
+    else if (background == BackgroundColor::Yellow) {
+        background = BackgroundColor::Green;
+    }
+    else if (background == BackgroundColor::Green) {
+        background = BackgroundColor::Black;
+    }
+    else if (background == BackgroundColor::Black) {
+        background = BackgroundColor::Purple;
+    }
+    else if (background == BackgroundColor::Purple) {
+        background = BackgroundColor::Pink;
+    }
+    else if (background == BackgroundColor::Pink) {
+        background = BackgroundColor::Red;
+    }
+    else {
+        background = BackgroundColor::Blue;
+    }
+}

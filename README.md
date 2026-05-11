@@ -1,4 +1,4 @@
-# Flappy Bird Clone
+# Flappy Bird Clone v0.3 
 
 A tiny Flappy Bird-style game written in C++ with a handmade Windows game loop and software renderer.
 
@@ -8,24 +8,18 @@ High scores are saved locally per Windows username in `build\data\profiles.txt`.
 
 ## Controls
 
-- Space, Up Arrow, or left mouse click: flap / start / retry
-- Escape: quit
+UP/DOWN     = move menu selection
+ENTER       = choose option
+ESC         = pause / back
+SPACE/CLICK = flap only while Playing
 
-## Source Layout
 
-- `src\main.cpp`: Windows startup, window messages, and the main loop
-- `src\Game.*`: bird, pipes, collision, scoring, and game state
-- `src\GameRenderer.*`: all game drawing and on-screen text
-- `src\BackBuffer.*` and `src\Renderer.*`: software drawing support
-- `src\Profile.*`: local player profile and high-score saving
-- `src\Common.h`: shared small types like rectangles, vectors, and colors
+## v0.3 Updates 
+- Added a main menu 
+- Added a pause menu using "ESC" on the keyboard 
+- Added a settings menu where you can change background colour 
+- Added new background colors (Currently blue, red, pink, purple, black, green, yellow) 
 
-## What Is Handmade
+## v0.2 Updates 
+- Added the option to change background colour using "B" on the keyboard (Red or blue) 
 
-- Fixed-window Win32 app setup
-- Game loop and frame timing
-- Software pixel back buffer
-- Rectangle and circle drawing
-- Input handling
-- Pipe movement and respawning
-- Collision and scoring

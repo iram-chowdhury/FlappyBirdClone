@@ -1,4 +1,4 @@
-# Flappy Bird Clone v0.3 
+# Flappy Bird Clone v0.4
 
 A tiny Flappy Bird-style game written in C++ with a handmade Windows game loop and software renderer.
 

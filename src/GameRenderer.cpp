@@ -174,7 +174,8 @@ void RenderGame(
 
         return;
     }
-        if (game.screen == AppScreen::UserSelect) {
+    if (game.screen == AppScreen::UserSelect) {
+
         DrawTextLine(backBuffer, windowDC,
             L"User Profiles",
             0, h / 2 - 150, 42,
@@ -184,6 +185,7 @@ void RenderGame(
         int startY = h / 2 - 70;
 
         for (int i = 0; i < static_cast<int>(profiles.size()); ++i) {
+
             std::wstring line;
 
             if (i == game.selectedProfileIndex) {
@@ -200,8 +202,28 @@ void RenderGame(
                 DT_CENTER);
         }
 
+        if (game.renamingProfile) {
+
+            std::wstring renameLine =
+                L"New Name: " + game.renameBuffer;
+
+            DrawTextLine(backBuffer, windowDC,
+                renameLine.c_str(),
+                0, h - 145, 24,
+                RGB(255, 255, 255),
+                DT_CENTER);
+
+            DrawTextLine(backBuffer, windowDC,
+                L"ENTER save | BACKSPACE delete | ESC cancel",
+                0, h - 105, 20,
+                RGB(255, 255, 255),
+                DT_CENTER);
+
+            return;
+        }
+
         DrawTextLine(backBuffer, windowDC,
-            L"ENTER to select | N new user | D delete user | ESC to go back",
+            L"ENTER select | N new | D delete | R rename | ESC back",
             0, h - 100, 20,
             RGB(255, 255, 255),
             DT_CENTER);

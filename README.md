@@ -1,4 +1,4 @@
-# Flappy Bird Clone v0.3 
+# Flappy Bird Clone v0.5
 
 A tiny Flappy Bird-style game written in C++ with a handmade Windows game loop and software renderer.
 
@@ -8,11 +8,17 @@ High scores are saved locally per Windows username in `build\data\profiles.txt`.
 
 ## Controls
 
-UP/DOWN     = move menu selection
-LEFT/RIGHT = in settings screen changes background colour 
-ENTER       = choose option
-ESC         = pause / back
-SPACE/CLICK = flap only while Playing
+UP/DOWN     = move menu selection.
+LEFT/RIGHT = in settings screen changes background colour.
+ENTER       = choose option.
+ESC         = pause / back.
+SPACE/CLICK = flap only while Playing.
+R = in user select allows you to rename user.
+D = in user select allows you to delete user.
+N = in user select allows you to create user. 
+
+## v0.5 Updates 
+- Added rename functionality in user select allowing user input (R in user select) 
 
 ## v0.4 Updates
 | Bug Fixes |

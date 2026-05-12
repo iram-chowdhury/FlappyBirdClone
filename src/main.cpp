@@ -171,6 +171,65 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
         }
         if (gGame.screen == AppScreen::UserSelect) {
 
+            if (gGame.renamingProfile) {
+
+                if (wParam == VK_RETURN) {
+
+                    if (!gGame.renameBuffer.empty()) {
+
+                        std::wstring oldName =
+                            gProfiles[gGame.selectedProfileIndex].name;
+
+                        std::wstring newName =
+                            gGame.renameBuffer;
+
+                        gProfileStore.RenameProfile(oldName, newName);
+
+                        gProfiles[gGame.selectedProfileIndex].name =
+                            newName;
+
+                        if (gProfile.name == oldName) {
+                            gProfile.name = newName;
+                        }
+                    }
+
+                    gGame.renamingProfile = false;
+                    gGame.renameBuffer.clear();
+                }
+
+                else if (wParam == VK_ESCAPE) {
+
+                    gGame.renamingProfile = false;
+                    gGame.renameBuffer.clear();
+                }
+
+                else if (wParam == VK_BACK) {
+
+                    if (!gGame.renameBuffer.empty()) {
+                        gGame.renameBuffer.pop_back();
+                    }
+                }
+
+                else if (wParam >= 'A' && wParam <= 'Z') {
+
+                    gGame.renameBuffer.push_back(
+                        static_cast<wchar_t>(wParam));
+                }
+
+                else if (wParam >= '0' && wParam <= '9') {
+
+                    gGame.renameBuffer.push_back(
+                        static_cast<wchar_t>(wParam));
+                }
+
+                else if (wParam == VK_SPACE) {
+
+                    gGame.renameBuffer.push_back(L' ');
+                }
+
+                break;
+            }
+
             if (wParam == VK_UP) {
 
                 --gGame.selectedProfileIndex;
@@ -218,6 +277,14 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
 
             else if (wParam == 'D') {
                 DeleteSelectedProfile();
+            }
+
+            else if (wParam == 'R') {
+
+                gGame.renamingProfile = true;
+
+                gGame.renameBuffer =
+                    gProfiles[gGame.selectedProfileIndex].name;
             }
 
             break;

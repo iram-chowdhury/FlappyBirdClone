@@ -3,6 +3,7 @@
 #include "Common.h"
 
 #include <cstdint>
+#include <string>
 
 enum class BackgroundColor {
     Blue,
@@ -42,6 +43,8 @@ struct Game {
     AppScreen screen = AppScreen::MainMenu;
     int selectedMenuItem = 0;
     int selectedProfileIndex = 0;
+    bool renamingProfile = false;
+    std::wstring renameBuffer;
 
     float groundY = 560.0f;
     float scroll = 0.0f;

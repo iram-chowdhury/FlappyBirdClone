@@ -19,7 +19,13 @@ static void DrawTextLine(BackBuffer& backBuffer, HDC dc, const wchar_t* text, in
     DeleteObject(font);
 }
 
-void RenderGame(HDC windowDC, BackBuffer& backBuffer, const Game& game, const PlayerProfile& profile) {
+void RenderGame(
+    HDC windowDC,
+    BackBuffer& backBuffer,
+    const Game& game,
+    const PlayerProfile& profile,
+    const std::vector<PlayerProfile>& profiles
+) {
     Renderer renderer{&backBuffer};
     uint32_t backgroundColor = RGB32(117, 203, 231);
 
@@ -168,12 +174,46 @@ void RenderGame(HDC windowDC, BackBuffer& backBuffer, const Game& game, const Pl
 
         return;
     }
+        if (game.screen == AppScreen::UserSelect) {
+        DrawTextLine(backBuffer, windowDC,
+            L"User Profiles",
+            0, h / 2 - 150, 42,
+            RGB(255, 255, 255),
+            DT_CENTER);
+
+        int startY = h / 2 - 70;
+
+        for (int i = 0; i < static_cast<int>(profiles.size()); ++i) {
+            std::wstring line;
+
+            if (i == game.selectedProfileIndex) {
+                line = L"> " + profiles[i].name;
+            }
+            else {
+                line = L"  " + profiles[i].name;
+            }
+
+            DrawTextLine(backBuffer, windowDC,
+                line.c_str(),
+                0, startY + i * 34, 26,
+                RGB(255, 255, 255),
+                DT_CENTER);
+        }
+
+        DrawTextLine(backBuffer, windowDC,
+            L"ENTER to select | N new user | D delete user | ESC to go back",
+            0, h - 100, 20,
+            RGB(255, 255, 255),
+            DT_CENTER);
+
+        return;
+    }
 
     wchar_t scoreText[64];
     std::swprintf(scoreText, 64, L"%d", game.score);
     DrawTextLine(backBuffer, windowDC, scoreText, 0, 20, 42, RGB(255, 255, 255), DT_CENTER);
 
-    std::wstring playerText = L"Player " + profile.name;
+    std::wstring playerText = profile.name;
     DrawTextLine(backBuffer, windowDC, playerText.c_str(), 18, 12, 18, RGB(35, 79, 92));
 
     wchar_t bestText[64];

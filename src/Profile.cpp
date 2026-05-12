@@ -78,7 +78,7 @@ std::wstring ProfileStore::GetProfilePath() const {
 
 PlayerProfile ProfileStore::LoadActiveProfile() const {
     PlayerProfile profile;
-    profile.name = GetEnvironmentText(L"USERNAME", L"Player");
+    profile.name = L"Player 1";
 
     std::string activeName = WideToUtf8(profile.name);
     std::istringstream input(ReadTextFile(GetProfilePath()));
@@ -123,6 +123,98 @@ bool ProfileStore::SaveProfile(const PlayerProfile& profile) const {
 
     std::ostringstream output;
     for (const auto& item : profiles) {
+        output << item.first << '\t' << item.second << '\n';
+    }
+
+    return WriteTextFile(GetProfilePath(), output.str());
+}
+
+std::vector<PlayerProfile> ProfileStore::LoadProfiles() const {
+    std::vector<PlayerProfile> profiles;
+
+    std::istringstream input(ReadTextFile(GetProfilePath()));
+    std::string line;
+
+    while (std::getline(input, line)) {
+        size_t tab = line.find('\t');
+
+        if (tab == std::string::npos) {
+            continue;
+        }
+
+        PlayerProfile profile;
+
+        std::string name = line.substr(0, tab);
+
+        int size = MultiByteToWideChar(CP_UTF8, 0, name.c_str(), static_cast<int>(name.size()), nullptr, 0);
+        profile.name.resize(size);
+        MultiByteToWideChar(CP_UTF8, 0, name.c_str(), static_cast<int>(name.size()), profile.name.data(), size);
+
+        try {
+            profile.bestScore = std::max(0, std::stoi(line.substr(tab + 1)));
+        }
+        catch (...) {
+            profile.bestScore = 0;
+        }
+
+        profiles.push_back(profile);
+    }
+
+    if (profiles.empty()) {
+        PlayerProfile defaultProfile;
+        defaultProfile.name = L"Player 1";
+        defaultProfile.bestScore = 0;
+        profiles.push_back(defaultProfile);
+    }
+
+    return profiles;
+}
+
+bool ProfileStore::DeleteProfile(const std::wstring& name) const {
+    std::vector<PlayerProfile> profiles = LoadProfiles();
+
+    std::map<std::string, int> remainingProfiles;
+    std::string nameToDelete = WideToUtf8(name);
+
+    for (const PlayerProfile& profile : profiles) {
+        std::string currentName = WideToUtf8(profile.name);
+
+        if (currentName != nameToDelete) {
+            remainingProfiles[currentName] = profile.bestScore;
+        }
+    }
+
+    std::ostringstream output;
+
+    for (const auto& item : remainingProfiles) {
+        output << item.first << '\t' << item.second << '\n';
+    }
+
+    return WriteTextFile(GetProfilePath(), output.str());
+}
+
+bool ProfileStore::RenameProfile(const std::wstring& oldName, const std::wstring& newName) const {
+    std::vector<PlayerProfile> profiles = LoadProfiles();
+
+    std::map<std::string, int> renamedProfiles;
+
+    std::string oldNameUtf8 = WideToUtf8(oldName);
+    std::string newNameUtf8 = WideToUtf8(newName);
+
+    for (const PlayerProfile& profile : profiles) {
+        std::string currentName = WideToUtf8(profile.name);
+
+        if (currentName == oldNameUtf8) {
+            renamedProfiles[newNameUtf8] = profile.bestScore;
+        }
+        else {
+            renamedProfiles[currentName] = profile.bestScore;
+        }
+    }
+
+    std::ostringstream output;
+
+    for (const auto& item : renamedProfiles) {
         output << item.first << '\t' << item.second << '\n';
     }
 

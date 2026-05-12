@@ -41,6 +41,7 @@ struct Game {
     BackgroundColor background = BackgroundColor::Blue;
     AppScreen screen = AppScreen::MainMenu;
     int selectedMenuItem = 0;
+    int selectedProfileIndex = 0;
 
     float groundY = 560.0f;
     float scroll = 0.0f;

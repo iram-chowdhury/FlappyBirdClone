@@ -7,6 +7,7 @@
 
 #include <windows.h>
 #include <mmsystem.h>
+#include <vector>
 
 #include <algorithm>
 
@@ -16,12 +17,45 @@ static ProfileStore gProfileStore;
 static PlayerProfile gProfile;
 static bool gRunning = true;
 static bool gInitialized = false;
+static std::vector<PlayerProfile> gProfiles;
 
 static void SaveHighScoreIfNeeded() {
     if (gGame.bestScore > gProfile.bestScore) {
         gProfile.bestScore = gGame.bestScore;
         gProfileStore.SaveProfile(gProfile);
     }
+}
+
+static void CreateNewProfile() {
+    int number = static_cast<int>(gProfiles.size()) + 1;
+
+    PlayerProfile newProfile;
+    newProfile.name = L"Player " + std::to_wstring(number);
+    newProfile.bestScore = 0;
+
+    gProfiles.push_back(newProfile);
+    gProfileStore.SaveProfile(newProfile);
+
+    gGame.selectedProfileIndex = static_cast<int>(gProfiles.size()) - 1;
+}
+
+static void DeleteSelectedProfile() {
+    if (gProfiles.size() <= 1) {
+        return;
+    }
+
+    int index = gGame.selectedProfileIndex;
+
+    gProfileStore.DeleteProfile(gProfiles[index].name);
+
+    gProfiles.erase(gProfiles.begin() + index);
+
+    if (gGame.selectedProfileIndex >= static_cast<int>(gProfiles.size())) {
+        gGame.selectedProfileIndex = static_cast<int>(gProfiles.size()) - 1;
+    }
+
+    gProfile = gProfiles[gGame.selectedProfileIndex];
+    gGame.SetBestScore(gProfile.bestScore);
 }
 
 static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -53,6 +87,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             }
             else if (wParam == VK_RETURN) {
                 if (gGame.selectedMenuItem == 0) {
+                    gGame.Reset(gBackBuffer.width, gBackBuffer.height);
                     gGame.screen = AppScreen::Playing;
                 }
                 else if (gGame.selectedMenuItem == 1) {
@@ -134,6 +169,59 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
                 gGame.screen = AppScreen::Playing;
             }
         }
+        if (gGame.screen == AppScreen::UserSelect) {
+
+            if (wParam == VK_UP) {
+
+                --gGame.selectedProfileIndex;
+
+                if (gGame.selectedProfileIndex < 0) {
+                    gGame.selectedProfileIndex =
+                        static_cast<int>(gProfiles.size()) - 1;
+                }
+            }
+
+            else if (wParam == VK_DOWN) {
+
+                ++gGame.selectedProfileIndex;
+
+                if (gGame.selectedProfileIndex >=
+                    static_cast<int>(gProfiles.size())) {
+
+                    gGame.selectedProfileIndex = 0;
+                }
+            }
+
+            else if (wParam == VK_RETURN) {
+
+                if (!gProfiles.empty()) {
+
+                    gProfile =
+                        gProfiles[gGame.selectedProfileIndex];
+
+                    gGame.SetBestScore(gProfile.bestScore);
+
+                    gGame.screen = AppScreen::MainMenu;
+                    gGame.selectedMenuItem = 0;
+                }
+            }
+
+            else if (wParam == VK_ESCAPE) {
+
+                gGame.screen = AppScreen::MainMenu;
+                gGame.selectedMenuItem = 0;
+            }
+
+            else if (wParam == 'N') {
+                CreateNewProfile();
+            }
+
+            else if (wParam == 'D') {
+                DeleteSelectedProfile();
+            }
+
+            break;
+        }
     } break;
 
     case WM_LBUTTONDOWN:
@@ -157,7 +245,15 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
 }
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int) {
-    gProfile = gProfileStore.LoadActiveProfile();
+    gProfiles = gProfileStore.LoadProfiles();
+
+    if (!gProfiles.empty()) {
+        gProfile = gProfiles[0];
+    }
+    else {
+        gProfile.name = L"Player 1";
+        gProfile.bestScore = 0;
+    }
 
     timeBeginPeriod(1);
 
@@ -199,12 +295,14 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int) {
         lastCounter = counter;
         dt = std::min(dt, 1.0f / 20.0f);
 
-        if (gGame.Update(dt, gBackBuffer.width, gBackBuffer.height)) {
-            SaveHighScoreIfNeeded();
+        if (gGame.screen == AppScreen::Playing) {
+            if (gGame.Update(dt, gBackBuffer.width, gBackBuffer.height)) {
+                SaveHighScoreIfNeeded();
+            }
         }
 
         HDC dc = GetDC(window);
-        RenderGame(dc, gBackBuffer, gGame, gProfile);
+        RenderGame(dc, gBackBuffer, gGame, gProfile, gProfiles);
         ReleaseDC(window, dc);
 
         Sleep(1);

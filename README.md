@@ -9,15 +9,28 @@ High scores are saved locally per Windows username in `build\data\profiles.txt`.
 ## Controls
 
 UP/DOWN     = move menu selection
+LEFT/RIGHT = in settings screen changes background colour 
 ENTER       = choose option
 ESC         = pause / back
 SPACE/CLICK = flap only while Playing
+
+## v0.4 Updates
+| Bug Fixes |
+- Pause actually pauses the game
+- Continue resumes from the same position
+- End returns to main menu 
+
+| Features |
+- Added local users with the option to create & delete users (no longer using Windows username) 
+UP / DOWN navigates through profiles, ENTER selects active profile, N creates a new user, D deletes user & ESC returns back to main menu
+- Added a seperate high score for each local user that is tracked in data/profiles.txt 
+- Makes sure that deleting selected profile stops you from deleting if there's only one profile left 
 
 
 ## v0.3 Updates 
 - Added a main menu 
 - Added a pause menu using "ESC" on the keyboard 
-- Added a settings menu where you can change background colour 
+- Added a settings menu where you can change background colour instead 
 - Added new background colors (Currently blue, red, pink, purple, black, green, yellow) 
 
 ## v0.2 Updates 

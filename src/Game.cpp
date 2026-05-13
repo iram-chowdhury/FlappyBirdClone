@@ -1,5 +1,5 @@
 #include "Game.h"
-
+#include "Audio.h"
 #include "WindowsConfig.h"
 
 #include <windows.h>
@@ -75,6 +75,7 @@ bool Game::Update(float dt, int, int height) {
     Rect birdBody = {bird.x - 18.0f, bird.y - 16.0f, 36.0f, 32.0f};
     if (birdBody.y < 0.0f || birdBody.y + birdBody.h > groundY) {
         gameOver = true;
+        PlayHitSound();
     }
 
     for (Pipe& pipe : pipes) {
@@ -90,11 +91,13 @@ bool Game::Update(float dt, int, int height) {
         Rect bottom = {pipe.x, pipe.gapY + gapSize * 0.5f, pipeWidth, groundY - (pipe.gapY + gapSize * 0.5f)};
         if (Intersects(birdBody, top) || Intersects(birdBody, bottom)) {
             gameOver = true;
+            PlayHitSound();
         }
 
         if (!pipe.scored && pipe.x + pipeWidth < bird.x) {
             pipe.scored = true;
             ++score;
+            PlayScoreSound();
             if (score > bestScore) {
                 bestScore = score;
                 highScoreChanged = true;

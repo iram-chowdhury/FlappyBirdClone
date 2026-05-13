@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "GameRenderer.h"
 #include "Profile.h"
+#include "Audio.h"
 
 #include <windows.h>
 #include <mmsystem.h>
@@ -75,17 +76,21 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
         if (gGame.screen == AppScreen::MainMenu) {
             if (wParam == VK_UP) {
                 --gGame.selectedMenuItem;
+               
                 if (gGame.selectedMenuItem < 0) {
                     gGame.selectedMenuItem = 2;
                 }
             }
             else if (wParam == VK_DOWN) {
                 ++gGame.selectedMenuItem;
+               
                 if (gGame.selectedMenuItem > 2) {
                     gGame.selectedMenuItem = 0;
                 }
             }
             else if (wParam == VK_RETURN) {
+                PlayMenuSelectSound();
+
                 if (gGame.selectedMenuItem == 0) {
                     gGame.Reset(gBackBuffer.width, gBackBuffer.height);
                     gGame.screen = AppScreen::Playing;
@@ -112,6 +117,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
 
             else if (wParam == VK_DOWN) {
                 ++gGame.selectedMenuItem;
+                
 
                 if (gGame.selectedMenuItem > 2) {
                     gGame.selectedMenuItem = 0;
@@ -119,6 +125,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             }
 
             else if (wParam == VK_RETURN) {
+                PlayMenuSelectSound();
 
                 if (gGame.selectedMenuItem == 0) {
                     gGame.screen = AppScreen::Playing;
@@ -143,10 +150,12 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
 
             if (wParam == VK_LEFT) {
                 gGame.PreviousBackground();
+               
             }
 
             else if (wParam == VK_RIGHT) {
                 gGame.NextBackground();
+                
             }
 
             else if (wParam == VK_ESCAPE) {
@@ -159,6 +168,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
         if (gGame.screen == AppScreen::Playing &&
             (wParam == VK_SPACE || wParam == VK_UP)) {
             gGame.Flap();
+            PlayFlapSound();
         }
         else if (wParam == VK_ESCAPE) {
             if (gGame.screen == AppScreen::Playing) {
@@ -174,6 +184,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             if (gGame.renamingProfile) {
 
                 if (wParam == VK_RETURN) {
+                    PlayMenuSelectSound();
 
                     if (!gGame.renameBuffer.empty()) {
 
@@ -233,6 +244,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             if (wParam == VK_UP) {
 
                 --gGame.selectedProfileIndex;
+                
 
                 if (gGame.selectedProfileIndex < 0) {
                     gGame.selectedProfileIndex =
@@ -243,6 +255,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             else if (wParam == VK_DOWN) {
 
                 ++gGame.selectedProfileIndex;
+                
 
                 if (gGame.selectedProfileIndex >=
                     static_cast<int>(gProfiles.size())) {
@@ -252,6 +265,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
             }
 
             else if (wParam == VK_RETURN) {
+                PlayMenuSelectSound();
 
                 if (!gProfiles.empty()) {
 
@@ -294,6 +308,7 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
     case WM_LBUTTONDOWN:
         if (gGame.screen == AppScreen::Playing) {
             gGame.Flap();
+            PlayFlapSound();
         }
         break;
 

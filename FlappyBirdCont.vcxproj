@@ -84,6 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Audio.cpp" />
     <ClCompile Include="src\BackBuffer.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GameRenderer.cpp" />
@@ -92,6 +93,7 @@
     <ClCompile Include="src\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Audio.h" />
     <ClInclude Include="src\BackBuffer.h" />
     <ClInclude Include="src\Common.h" />
     <ClInclude Include="src\Game.h" />

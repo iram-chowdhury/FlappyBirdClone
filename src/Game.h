@@ -34,6 +34,8 @@ struct Game {
     Vec2 bird = {160.0f, 260.0f};
     float birdVelocity = 0.0f;
     Pipe pipes[3] = {};
+    int mouseX = 0;
+    int mouseY = 0;
     int score = 0;
     int bestScore = 0;
     bool started = false;
@@ -45,6 +47,7 @@ struct Game {
     int selectedProfileIndex = 0;
     bool renamingProfile = false;
     std::wstring renameBuffer;
+    bool soundMuted = false;
 
     float groundY = 560.0f;
     float scroll = 0.0f;

@@ -1,4 +1,4 @@
-# Flappy Bird Clone v0.6
+# Flappy Bird Clone v0.7
 
 A tiny Flappy Bird-style game written in C++ with a handmade Windows game loop and software renderer.
 
@@ -23,6 +23,17 @@ R = in user select allows you to rename user
 D = in user select allows you to delete user
 
 N = in user select allows you to create user
+
+M = in settings to toggle sound
+
+## v0.7 Updates
+- Added full mouse hover support for: Main Menu, Pause Menu & User Select
+-Added full mouse click support for: Main Menu, Pause Menu, Settings & User Select 
+- Added live cursor-based menu selection
+- Added clickable background selection in settings
+- Added sound mute system that can be toggled on or off in settings or using mouse click (also has a dynamic sound on / off display) 
+- Improved overall UI responsiveness & menu navigation
+- Menu interaction system now supports both keyboard & mouse support yippee
 
 ## v0.6 Updates 
 - Added sound effects to the game (Flap, Score, Die & Menu Select)

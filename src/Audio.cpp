@@ -6,6 +6,16 @@
 
 #pragma comment(lib, "winmm.lib")
 
+static bool gSoundMuted = false;
+
+void SetSoundMuted(bool muted) {
+    gSoundMuted = muted;
+}
+
+bool IsSoundMuted() {
+    return gSoundMuted;
+}
+
 static std::wstring GetExeDirectory() {
     wchar_t path[MAX_PATH] = {};
     GetModuleFileNameW(nullptr, path, MAX_PATH);
@@ -21,6 +31,10 @@ static std::wstring GetExeDirectory() {
 }
 
 static void PlaySimpleSound(const wchar_t* filename) {
+    if (gSoundMuted) {
+        return;
+    }
+
     std::wstring path = GetExeDirectory() + L"\\data\\sounds\\" + filename;
 
     BOOL success = PlaySoundW(
@@ -30,7 +44,7 @@ static void PlaySimpleSound(const wchar_t* filename) {
     );
 
     if (!success) {
-        OutputDebugStringW(L"Sound failed to play: ");
+        OutputDebugStringW(L"Sound failed to play:O ");
         OutputDebugStringW(path.c_str());
         OutputDebugStringW(L"\n");
     }

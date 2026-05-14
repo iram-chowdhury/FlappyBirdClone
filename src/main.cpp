@@ -61,6 +61,58 @@ static void DeleteSelectedProfile() {
 
 static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
+    case WM_MOUSEMOVE: {
+
+        gGame.mouseX = LOWORD(lParam);
+        gGame.mouseY = HIWORD(lParam);
+
+        if (gGame.screen == AppScreen::MainMenu) {
+
+            int mouseY = gGame.mouseY;
+
+            if (mouseY >= 250 && mouseY <= 330) {
+                gGame.selectedMenuItem = 0; // Start 
+            }
+            else if (mouseY >= 330 && mouseY <= 360) {
+                gGame.selectedMenuItem = 1; // User 
+            }
+            else if (mouseY >= 360 && mouseY <= 400) {
+                gGame.selectedMenuItem = 2; // Settings
+            }
+        }
+
+        if (gGame.screen == AppScreen::Paused) {
+
+            int mouseY = gGame.mouseY;
+
+            if (mouseY >= 250 && mouseY <= 330) {
+                gGame.selectedMenuItem = 0; // Continue
+            }
+            else if (mouseY >= 330 && mouseY <= 360) {
+                gGame.selectedMenuItem = 1; // Settings
+            }
+            else if (mouseY >= 360 && mouseY <= 400) {
+                gGame.selectedMenuItem = 2; // End
+            }
+        }
+
+        if (gGame.screen == AppScreen::UserSelect && !gGame.renamingProfile) {
+
+            int startY = gBackBuffer.height / 2 - 70;
+
+            for (int i = 0; i < static_cast<int>(gProfiles.size()); ++i) {
+                int rowTop = startY + i * 34;
+                int rowBottom = rowTop + 34;
+
+                if (gGame.mouseY >= rowTop && gGame.mouseY <= rowBottom) {
+                    gGame.selectedProfileIndex = i;
+                    break;
+                }
+            }
+        }
+
+    } break;
+
     case WM_SIZE: {
         RECT rect;
         GetClientRect(window, &rect);
@@ -160,6 +212,11 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
 
             else if (wParam == VK_ESCAPE) {
                 gGame.screen = AppScreen::MainMenu;
+            }
+
+            else if (wParam == 'M') {
+                gGame.soundMuted = !gGame.soundMuted;
+                SetSoundMuted(gGame.soundMuted);
             }
 
             break;
@@ -309,6 +366,109 @@ static LRESULT CALLBACK WindowProc(HWND window, UINT message, WPARAM wParam, LPA
         if (gGame.screen == AppScreen::Playing) {
             gGame.Flap();
             PlayFlapSound();
+        }
+
+        if (gGame.screen == AppScreen::MainMenu) {
+
+            PlayMenuSelectSound();
+
+            if (gGame.selectedMenuItem == 0) {
+
+                gGame.Reset(gBackBuffer.width, gBackBuffer.height);
+                gGame.screen = AppScreen::Playing;
+            }
+            else if (gGame.selectedMenuItem == 1) {
+
+                gGame.screen = AppScreen::UserSelect;
+            }
+            else if (gGame.selectedMenuItem == 2) {
+
+                gGame.screen = AppScreen::Settings;
+            }
+
+            break;
+        }
+
+        if (gGame.screen == AppScreen::Paused) {
+
+            PlayMenuSelectSound();
+
+            if (gGame.selectedMenuItem == 0) {
+
+                gGame.screen = AppScreen::Playing;
+            }
+            else if (gGame.selectedMenuItem == 1) {
+
+                gGame.screen = AppScreen::Settings;
+            }
+            else if (gGame.selectedMenuItem == 2) {
+
+                gGame.screen = AppScreen::MainMenu;
+
+                gGame.Reset(gBackBuffer.width, gBackBuffer.height);
+                gGame.selectedMenuItem = 0;
+            }
+
+            break;
+        }
+
+        if (gGame.screen == AppScreen::UserSelect && !gGame.renamingProfile) {
+
+            PlayMenuSelectSound();
+
+            int startY = gBackBuffer.height / 2 - 70;
+
+            for (int i = 0; i < static_cast<int>(gProfiles.size()); ++i) {
+                int rowTop = startY + i * 34;
+                int rowBottom = rowTop + 34;
+
+                if (gGame.mouseY >= rowTop && gGame.mouseY <= rowBottom) {
+                    gGame.selectedProfileIndex = i;
+                    gProfile = gProfiles[i];
+                    gGame.SetBestScore(gProfile.bestScore);
+                    gGame.screen = AppScreen::MainMenu;
+                    gGame.selectedMenuItem = 0;
+                    break;
+                }
+            }
+
+            break;
+        }
+
+        if (gGame.screen == AppScreen::Settings) {
+
+            PlayMenuSelectSound();
+
+            int mouseX = gGame.mouseX;
+            int mouseY = gGame.mouseY;
+
+            int centerY = gBackBuffer.height / 2;
+
+            // Background row
+            if (mouseY >= centerY - 55 && mouseY <= centerY - 5) {
+
+                if (mouseX < gBackBuffer.width / 2) {
+                    gGame.PreviousBackground();
+                }
+                else {
+                    gGame.NextBackground();
+                }
+            }
+
+            // Sound row
+            else if (mouseY >= centerY && mouseY <= centerY + 45) {
+
+                gGame.soundMuted = !gGame.soundMuted;
+                SetSoundMuted(gGame.soundMuted);
+            }
+
+            // Back row
+            else if (mouseY >= centerY + 80 && mouseY <= centerY + 125) {
+
+                gGame.screen = AppScreen::MainMenu;
+            }
+
+            break;
         }
         break;
 

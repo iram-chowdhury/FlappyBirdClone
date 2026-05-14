@@ -126,7 +126,7 @@ void RenderGame(
 
         DrawTextLine(backBuffer, windowDC,
             L"Settings",
-            0, h / 2 - 120, 42,
+            0, h / 2 - 130, 42,
             RGB(255, 255, 255),
             DT_CENTER);
 
@@ -151,24 +151,33 @@ void RenderGame(
             backgroundText = L"Yellow";
         }
 
-        std::wstring settingLine =
+        std::wstring backgroundLine =
             L"Background Color: " + std::wstring(backgroundText);
 
         DrawTextLine(backBuffer, windowDC,
-            settingLine.c_str(),
-            0, h / 2 - 20, 28,
+            backgroundLine.c_str(),
+            0, h / 2 - 35, 28,
+            RGB(255, 255, 255),
+            DT_CENTER);
+
+        std::wstring soundLine =
+            game.soundMuted ? L"Sound: OFF (M to toggle)" : L"Sound: ON (M to toggle)";
+
+        DrawTextLine(backBuffer, windowDC,
+            soundLine.c_str(),
+            0, h / 2 + 15, 26,
             RGB(255, 255, 255),
             DT_CENTER);
 
         DrawTextLine(backBuffer, windowDC,
-            L"LEFT / RIGHT to change",
-            0, h / 2 + 30, 22,
+            L"LEFT / RIGHT to change background",
+            0, h / 2 + 65, 20,
             RGB(255, 255, 255),
             DT_CENTER);
 
         DrawTextLine(backBuffer, windowDC,
             L"ESC to go back",
-            0, h / 2 + 70, 22,
+            0, h / 2 + 100, 20,
             RGB(255, 255, 255),
             DT_CENTER);
 

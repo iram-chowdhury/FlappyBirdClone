@@ -28,7 +28,7 @@ M = in settings to toggle sound
 
 ## v0.7 Updates
 - Added full mouse hover support for: Main Menu, Pause Menu & User Select
--Added full mouse click support for: Main Menu, Pause Menu, Settings & User Select 
+- Added full mouse click support for: Main Menu, Pause Menu, Settings & User Select 
 - Added live cursor-based menu selection
 - Added clickable background selection in settings
 - Added sound mute system that can be toggled on or off in settings or using mouse click (also has a dynamic sound on / off display) 
